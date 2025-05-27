@@ -53,7 +53,7 @@ const App = () => {
 
       {votes[mostVotedIndex] > 0 ? (
         <div>
-          <Text value={`${anecdotes[mostVotedIndex]} has ${votes[mostVotedIndex]} votes`} />
+          <Text value={`${anecdotes[mostVotedIndex]}`} />
           <Text value={`has ${votes[mostVotedIndex]} votes`} />
         </div>
       ) : (
