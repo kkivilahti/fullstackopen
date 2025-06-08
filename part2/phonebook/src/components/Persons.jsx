@@ -10,7 +10,7 @@ const Persons = ({ showPersons, handleDelete }) => {
         </li>
       ))}
 
-      {showPersons.length < 1 && <p><i>No numbers found</i></p>}
+      {showPersons.length < 1 && <p style={{ color: 'red' }}><i>No numbers found</i></p>}
     </ul>
   );
 };
