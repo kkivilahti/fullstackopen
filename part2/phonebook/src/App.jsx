@@ -11,7 +11,7 @@ const App = () => {
   const [filterBy, setFilterBy] = useState('');
   const [notification, setNotification] = useState({ type: '', message: '' });
 
-  // Fetch initial data on first render
+  // Set initial data on first render
   useEffect(() => {
     personService.getAll().then(personData => {
       setPersons(personData);
@@ -46,9 +46,11 @@ const App = () => {
             setPersons(persons.map(person => person.id === checkPerson.id ? returnedPerson : person));
             setNotification({ type: 'success', message: `${newPerson.name} updated` });
             console.log(`Updated ${newPerson.name}`);
+            setNewPerson({ name: '', number: '' });
           })
           .catch((error) => {
-            setNotification({ type: 'error', message: `Information of ${checkPerson.name} has already been removed from server` });
+            setNotification({ type: 'error', message: `Error, ${checkPerson.name} has already been removed from server` });
+            setPersons(persons.filter(person => person.id !== checkPerson.id));
             console.log('Error while updating: ', error);
           });
       }
@@ -59,14 +61,13 @@ const App = () => {
           setPersons(persons.concat(addedPerson));
           setNotification({ type: 'success', message: `${newPerson.name} added` });
           console.log(`Added ${addedPerson.name}`);
+          setNewPerson({ name: '', number: '' });
         })
         .catch((error) => {
           setNotification({ type: 'error', message: `Error while adding ${newPerson.name}` });
           console.log('Error while adding a new person: ', error);
         });
     }
-
-    setNewPerson({ name: '', number: '' });
   };
 
   // Delete person after confirmation
@@ -80,7 +81,7 @@ const App = () => {
           console.log(`Deleted ${deletedPerson.name}`);
         })
         .catch((error) => {
-          setNotification({ type: 'error', message: `Information of ${name} was already removed from server` });
+          setNotification({ type: 'error', message: `Error while deleting ${name}` });
           console.log('Error while deleting: ', error);
         });
     }
