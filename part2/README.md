@@ -4,13 +4,13 @@ Part 2 continues with React basics, focusing on topics like list rendering, modu
 
 The exercises:
 ## Courseinfo
-![courseinfo screenshot](screenshots\courseinfo.png)
+![courseinfo screenshot](screenshots/courseinfo.png)
 - Creating reusable components
 - Rendering lists dynamically with `map`
 - Calculating using `reduce`
 
 ## Phonebook
-![phonebook screenshot](screenshots\phonebook.png)
+![phonebook screenshot](screenshots/phonebook.png)
 - Managing form inputs and state
 - Communicating with server using `Axios` (GET, POST, PUT, DELETE)
 - Filtering contacts based on user input
@@ -21,9 +21,9 @@ Note! When running the Phonebook app, remember to start the backend server by ru
 ```npm run server```
 
 ## Countries
-![countries screenshot](screenshots\countries1.png)
+![countries screenshot](screenshots/countries1.png)
 
-![countries screenshot](screenshots\countries2.png)
+![countries screenshot](screenshots/countries2.png)
 - Fetching data from public APIs:
     - Rest Countries
     - OpenWeatherMap
