@@ -1,7 +1,16 @@
 const express = require('express');
+const morgan = require('morgan');
+
+// custom morgan token to log request body
+morgan.token('body', (request) => JSON.stringify(request.body));
+
 const app = express();
 
+app.use(express.static('dist'));
 app.use(express.json());
+
+// log http requests to console
+app.use(morgan(':method :url :status :res[content-length] - :response-time ms :body'));
 
 let persons = [
     {
@@ -50,7 +59,7 @@ app.delete('/api/persons/:id', (request, response) => {
 
 const generateId = () => {
     // convert id to string to avoid type mismatches
-    return Math.floor(Math.random() * 50).toString();
+    return Math.floor(Math.random() * 500).toString();
 }
 
 app.post('/api/persons', (request, response) => {
@@ -69,7 +78,7 @@ app.post('/api/persons', (request, response) => {
         });
     }
 
-    // check if id exists -> if yes, generate new
+    // generate a new id until it's unique
     let id;
     do {
         id = generateId();
@@ -87,7 +96,7 @@ app.post('/api/persons', (request, response) => {
 
 app.get('/info', (request, response) => {
     let amount = persons.length;
-    let now = new Date();
+    let date = new Date();
     const options = {
         weekday: 'long',
         day: 'numeric',
@@ -97,7 +106,7 @@ app.get('/info', (request, response) => {
         hour: '2-digit',
         minute: '2-digit'
     }
-    const formattedDate = Intl.DateTimeFormat('en-BR', options).format(now);
+    const formattedDate = Intl.DateTimeFormat('en-BR', options).format(date);
 
     response.send(`
         <p>Phonebook has info for ${amount} people</p>
@@ -105,7 +114,7 @@ app.get('/info', (request, response) => {
     `);
 });
 
-const PORT = 3001;
+const PORT = process.env.PORT || 3001;
 app.listen(PORT, () => {
     console.log(`Server running on port ${PORT}`)
 });
