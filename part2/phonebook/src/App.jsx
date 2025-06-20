@@ -9,13 +9,12 @@ const App = () => {
   const [persons, setPersons] = useState([]);
   const [newPerson, setNewPerson] = useState({ name: '', number: '' });
   const [filterBy, setFilterBy] = useState('');
-  const [notification, setNotification] = useState({ type: '', message: '' });
+  const [notification, setNotification] = useState(null);
 
   // Set initial data on first render
   useEffect(() => {
     personService.getAll().then(personData => {
       setPersons(personData);
-      setNotification(null);
     });
   }, []);
 
@@ -75,10 +74,10 @@ const App = () => {
     if (window.confirm(`Delete ${name}?`)) {
       personService
         .deletePerson(id)
-        .then((deletedPerson) => {
+        .then(() => {
           setPersons(persons.filter(person => person.id !== id));
-          setNotification({ type: 'success', message: `${deletedPerson.name} deleted` });
-          console.log(`Deleted ${deletedPerson.name}`);
+          setNotification({ type: 'success', message: `${name} deleted` });
+          console.log(`Deleted ${name}`);
         })
         .catch((error) => {
           setNotification({ type: 'error', message: `Error while deleting ${name}` });
@@ -90,7 +89,7 @@ const App = () => {
   return (
     <div>
       <h2>Phonebook</h2>
-      {notification && <Notification data={notification} setData={setNotification} />}
+      {notification && <Notification data={notification} />}
       <Filter filterBy={filterBy} setFilterBy={setFilterBy} />
 
       <h2>Add a new</h2>
