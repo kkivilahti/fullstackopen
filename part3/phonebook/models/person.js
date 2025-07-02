@@ -2,21 +2,35 @@ const mongoose = require('mongoose');
 
 mongoose.set('strictQuery', false);
 
-// get connection url from env variables
+// get MongoDB connection url from environment variables
 const url = process.env.MONGODB_URI;
 
 console.log('connecting to', url);
 mongoose.connect(url)
-    .then(result => {
-        console.log('connected to MongoDB')
+    .then(() => {
+        console.log('connected to MongoDB');
     })
     .catch((error) => {
-        console.log('error connecting to MongoDB:', error.message)
+        console.log('error connecting to MongoDB:', error.message);
     });
 
 const personSchema = new mongoose.Schema({
-    name: String,
-    number: String,
+    name: {
+        type: String,
+        minlength: 3,
+        required: true
+    },
+    number: {
+        type: String,
+        minlength: 8,
+        required: true,
+        validate: {
+            validator: function(value) {
+                return /\d{2,3}-\d{6,10}/.test(value);
+            },
+            message: 'Invalid number. Expected format: 12-123456 or 123-123456'
+        }
+    },
 });
 
 // modify json response: convert id to string, and remove unnecessary fields
@@ -26,6 +40,6 @@ personSchema.set('toJSON', {
         delete returnedObject._id;
         delete returnedObject.__v;
     }
-})
+});
 
 module.exports = mongoose.model('Person', personSchema);

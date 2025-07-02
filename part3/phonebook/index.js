@@ -26,16 +26,12 @@ app.get('/api/persons/:id', (request, response, next) => {
 
 app.delete('/api/persons/:id', (request, response, next) => {
     Person.findByIdAndDelete(request.params.id)
-        .then(result => response.status(204).end())
+        .then(() => response.status(204).end())
         .catch(error => next(error));
 });
 
 app.post('/api/persons', (request, response, next) => {
     const body = request.body;
-
-    if (!body.name || !body.number) {
-        return response.status(400).json({ error: 'name or number missing' });
-    }
 
     const person = new Person({
         name: body.name,
@@ -62,7 +58,7 @@ app.put('/api/persons/:id', (request, response, next) => {
             return person.save().then((updatedPerson) => response.json(updatedPerson));
         })
         .catch(error => next(error));
-})
+});
 
 app.get('/info', async (request, response, next) => {
     try {
@@ -81,8 +77,10 @@ app.get('/info', async (request, response, next) => {
         const formattedDate = new Intl.DateTimeFormat('en-BR', options).format(date);
 
         response.send(`
-            <p>Phonebook has info for ${amount} people</p>
-            <p>${formattedDate}</p>
+            <div style="text-align:center;font-family:helvetica;padding-top:50px;">
+                <p>Phonebook has info for ${amount} people</p>
+                <p>${formattedDate}</p>
+            </div>
         `);
     } catch (error) {
         next(error);
@@ -92,7 +90,7 @@ app.get('/info', async (request, response, next) => {
 // middleware to handle unknown endpoints
 const unknownEndpoint = (request, response) => {
     response.status(404).send({ error: 'unknown endpoint' });
-}
+};
 
 app.use(unknownEndpoint);
 
@@ -102,14 +100,16 @@ const errorHandler = (error, request, response, next) => {
 
     if (error.name === 'CastError') {
         return response.status(400).send({ error: 'malformatted id' });
+    } else if (error.name === 'ValidationError') {
+        return response.status(400).json({ error: error.message });
     }
 
     next(error);
-}
+};
 
 app.use(errorHandler);
 
 const PORT = process.env.PORT || 3001;
 app.listen(PORT, () => {
-    console.log(`Server running on port ${PORT}`)
+    console.log(`Server running on port ${PORT}`);
 });
