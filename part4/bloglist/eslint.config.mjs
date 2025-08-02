@@ -20,6 +20,8 @@ export default [
       'no-trailing-spaces': 'warn',
       'object-curly-spacing': ['warn', 'always'],
       'arrow-spacing': ['warn', { before: true, after: true }],
+      'indent': ['warn', 2],
+      'no-unused-vars': 'warn'
     },
   },
   {
