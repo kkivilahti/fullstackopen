@@ -70,7 +70,7 @@ describe('with initial data saved', () => {
       const authors = response.body.map(blog => blog.author);
 
       assert.strictEqual(response.body.length, testDataList.length);
-      assert.ok(!(authors.includes('Test author')));
+      assert.ok(!authors.includes('Test author'));
     });
 
     test('defaults likes to zero if not defined', async () => {
@@ -87,6 +87,66 @@ describe('with initial data saved', () => {
 
       assert.ok('likes' in newestBlog);
       assert.strictEqual(newestBlog.likes, 0);
+    });
+  });
+
+  describe('deleting a blog', () => {
+    test('succeeds with valid id', async () => {
+      let response = await api.get('/api/blogs');
+      let blogs = response.body;
+      const blogToDelete = blogs[0];
+      const blogsBefore = blogs.length;
+
+      await api.delete(`/api/blogs/${blogToDelete.id}`).expect(204);
+
+      response = await api.get('/api/blogs');
+      blogs = response.body;
+      const blogsAfter = blogs.length;
+
+      const ids = blogs.map(blog => blog.id);
+      assert(!ids.includes(blogToDelete.id));
+      assert.strictEqual(blogsBefore - 1, blogsAfter);
+    });
+
+    test('fails with invalid id', async () => {
+      const invalidId = '123';
+      await api.delete(`/api/blogs/${invalidId}`).expect(400);
+    });
+  });
+
+  describe('editing a blog', () => {
+    test('succeeds with valid data', async () => {
+      let response = await api.get('/api/blogs');
+      let blogs = response.body;
+      const blogToUpdate = blogs[0];
+      const blogsBefore = blogs.length;
+
+      const updated = { ...blogToUpdate, likes: 300 };
+      await api
+        .put(`/api/blogs/${blogToUpdate.id}`)
+        .send(updated)
+        .expect(200)
+        .expect('Content-Type', /application\/json/);
+
+      response = await api.get('/api/blogs');
+      blogs = response.body;
+      const blogsAfter = blogs.length;
+      const updatedBlog = blogs.find(blog => blog.id === blogToUpdate.id);
+
+      assert.strictEqual(blogsBefore, blogsAfter);
+      assert.strictEqual(updatedBlog.likes, 300);
+    });
+
+    test('fails when required fields are empty', async () => {
+      let response = await api.get('/api/blogs');
+      let blogs = response.body;
+      const blogToUpdate = blogs[0];
+
+      const updated = { ...blogToUpdate, title: '', url: '' };
+      await api
+        .put(`/api/blogs/${blogToUpdate.id}`)
+        .send(updated)
+        .expect(400);
     });
   });
 });
